@@ -73,10 +73,10 @@
                 </div> -->
                     
                 <div class="mx-1">
-                    <form action="/dailyreport.php" method="get" class = "input-group" id="datepicker" name="datepicker" autocomplete="off">
+                    <form action="/dailyreport.php" method="get" class = "input-group" name="datepicker" autocomplete="off">
                         <!-- <input autocomplete="off" type="hidden"> -->
-                        <input type="text" class="form-control" id="searchDate" name="searchDate" value="" >
-                        <button type="submit" value="date" class="btn btn-primary">
+                        <input type="text" class="form-control datepicker" name="searchDate" value="" >
+                        <button type="button" value="date" class="btn btn-primary">
                             <i class="bi bi-calendar"></i>
                         </button>
                     

@@ -150,4 +150,31 @@
         $mysqlInstance->deleteWeeklyReport ($id);
     }
 
+    // endpoint slug
+    if ($action == "api-total-count-year") {
+        $year = date('Y');
+        
+        // execute query to get total amount in current year
+        $getAmountYear = $mysqlInstance->getAmountYear($year);
+
+        // format data to have array of amount and value
+        $formatData = ["amount" => $getAmountYear['SUM(daily_transaction)']];
+
+        // return value to axios request should be 'echo' and should be json_encoded
+        echo json_encode($formatData);
+    }
+
+    if ($action == "api-create-daily-report") {
+        
+        $date = date ('Y-m-d', strtotime ());
+        $transaction = (int) $_POST['transaction'];
+        $startMoney = (int) $_POST['startMoney'];
+        $cash = (int) $_POST['cash'];
+        $gcash = (int) $_POST['gcash'];
+        $expenses = (int) $_POST['expenses'];
+        $otherExpenses = (int) $_POST['otherExpenses'];
+        $debt = (int) $_POST['debt'];
+
+    }
+
     

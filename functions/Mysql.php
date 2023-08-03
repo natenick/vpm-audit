@@ -247,5 +247,18 @@
                 
         }
         
+        function getAmountYear ($year) {
+            $sqlQuery = "select SUM(daily_transaction) from daily_report where date like '%$year%' ";
+
+            $result = $this->conn->query($sqlQuery);
+
+            $newResult = "";
+            while ($row = $result->fetch_assoc()) {
+                $newResult = $row;
+            };
+
+            return $newResult;
+        }
+        
     }
 
