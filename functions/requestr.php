@@ -49,10 +49,13 @@
         $createdAt = date("Y-m-d H:i:s");
         $updatedAt = date("Y-m-d H:i:s");
 
-        $mysqlInstance->createDailyReport ($date, $transaction, $startMoney, $cash, $gcash, $expenses, $otherExpenses, $debt, $actualCash, $supposedCash, $outcome, $createdAt, $updatedAt, $status);
+        $queryResult = $mysqlInstance->createDailyReport ($date, $transaction, $startMoney, $cash, $gcash, $expenses, $otherExpenses, $debt, $actualCash, $supposedCash, $outcome, $createdAt, $updatedAt, $status);
         // echo '<pre>';
         // print_r ($check);
         // exit;
+
+        echo json_encode($queryResult);
+        exit;
     }
 
     // if ($action == 'date-sample') {
@@ -142,7 +145,15 @@
         $grandTotalCount = (int) $totalCount - $itemShort;
 
 
-        $mysqlInstance->createWeeklyAuditReport ($startDate, $endDate, $sumGainCount, $sumLossCount, $totalCount, $itemShort, $grandTotalCount);
+        //
+        // [NOTES]: COMMENT KO MUNA TONG DEFAULT MO
+        //
+        // $mysqlInstance->createWeeklyAuditReport ($startDate, $endDate, $sumGainCount, $sumLossCount, $totalCount, $itemShort, $grandTotalCount);
+
+        $queryResult = $mysqlInstance->createWeeklyAuditReport ($startDate, $endDate, $sumGainCount, $sumLossCount, $totalCount, $itemShort, $grandTotalCount);
+
+        echo json_encode($queryResult);
+        exit;
     }
 
     if ($action == 'delete-weekly-report') {
@@ -184,6 +195,23 @@
         exit;
     }
 
-    
+    if ($action == "get-daily-report-api") {
+        $page = isset ($_GET ['page']) ? $_GET ['page'] : 1;
+        $searchDate = isset ($_GET ['searchDate']) ? $_GET['searchDate'] : '';
+        $limit = isset ($_GET ['limit']) ? $_GET ['limit'] : 10;
+        $offset = $page == 1 ? 0 : ($page - 1) * $limit;
+        
 
+        
+        $formattedDate = empty ($searchDate) ? '' : date ("Y-m-d", strtotime ($searchDate));
+        $dailyReportList = $mysqlInstance->getAllDailyReport($formattedDate, $limit, $offset);
+        $reportCount = $mysqlInstance->getReportTotalCount();
+        $numberOfPages = ceil($reportCount['count(id)'] / $limit);
+
+        $queryResult = $mysqlInstance->getAllDailyReport($formattedDate, $limit, $offset);
+
+        echo json_encode($queryResult);
+        exit;
+    }
+ 
     

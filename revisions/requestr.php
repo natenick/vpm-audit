@@ -49,10 +49,12 @@
         $createdAt = date("Y-m-d H:i:s");
         $updatedAt = date("Y-m-d H:i:s");
 
-        $mysqlInstance->createDailyReport ($date, $transaction, $startMoney, $cash, $gcash, $expenses, $otherExpenses, $debt, $actualCash, $supposedCash, $outcome, $createdAt, $updatedAt, $status);
+        $queryResult = $mysqlInstance->createDailyReport ($date, $transaction, $startMoney, $cash, $gcash, $expenses, $otherExpenses, $debt, $actualCash, $supposedCash, $outcome, $createdAt, $updatedAt, $status);
         // echo '<pre>';
         // print_r ($check);
         // exit;
+        echo json_encode($queryResult);
+        exit;
     }
 
     // if ($action == 'date-sample') {
@@ -142,7 +144,15 @@
         $grandTotalCount = (int) $totalCount - $itemShort;
 
 
-        $mysqlInstance->createWeeklyAuditReport ($startDate, $endDate, $sumGainCount, $sumLossCount, $totalCount, $itemShort, $grandTotalCount);
+        //
+        // [NOTES]: COMMENT KO MUNA TONG DEFAULT MO
+        //
+        // $mysqlInstance->createWeeklyAuditReport ($startDate, $endDate, $sumGainCount, $sumLossCount, $totalCount, $itemShort, $grandTotalCount);
+
+        $queryResult = $mysqlInstance->createWeeklyAuditReport ($startDate, $endDate, $sumGainCount, $sumLossCount, $totalCount, $itemShort, $grandTotalCount);
+
+        echo json_encode($queryResult);
+        exit;
     }
 
     if ($action == 'delete-weekly-report') {
@@ -184,6 +194,12 @@
         exit;
     }
 
-    
 
+    if ($action == "get-daily-report-api") {
+        $queryResult = $mysqlInstance->getAllDailyReport($formattedDate, $limit, $offset);
+
+        echo json_encode($queryResult);
+        exit;
+    }
+ 
     

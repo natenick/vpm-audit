@@ -35,7 +35,7 @@
                         <a class="nav-link active" aria-current="page" href="/dailyreport.php">Daily Report</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/weeklyauditreport.php">Weekly Audit Report</a>
+                        <a class="nav-link active" aria-current="page" href="/weeklyauditreportr.php">Weekly Audit Report</a>
                     </li>
                 </ul>
             </div>

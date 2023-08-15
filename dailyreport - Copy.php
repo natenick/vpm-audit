@@ -3,27 +3,29 @@
     // import your header file
     include_once './layout/header.php';
 
-    // $servername = "localhost";
-    // $username = "root";
-    // $password = "root";
-    // $database = "audit";
+    $servername = "localhost";
+    $username = "root";
+    $password = "root";
+    $database = "audit";
 
-    // $mysqlInstance = new Mysql ($servername, $username, $password, $database);
-
-    
-    
-    // $page = isset ($_GET ['page']) ? $_GET ['page'] : 1;
-    // $searchDate = isset ($_GET ['searchDate']) ? $_GET['searchDate'] : '';
-    // $limit = isset ($_GET ['limit']) ? $_GET ['limit'] : 5;
-    // $offset = $page == 1 ? 0 : ($page - 1) * $limit;
-    
+    $mysqlInstance = new Mysql ($servername, $username, $password, $database);
 
     
-    // $formattedDate = empty ($searchDate) ? '' : date ("Y-m-d", strtotime ($searchDate));
-    // print_r ($searchDate);
-    // $dailyReportList = $mysqlInstance->getAllDailyReport($formattedDate, $limit, $offset);
-    // $reportCount = $mysqlInstance->getReportTotalCount();
-    // $numberOfPages = ceil($reportCount['count(id)'] / $limit);
+    // print_r ($dailyReportList);
+    $page = isset ($_GET ['page']) ? $_GET ['page'] : 1;
+    $searchDate = isset ($_GET ['searchDate']) ? $_GET['searchDate'] : '';
+    $limit = isset ($_GET ['limit']) ? $_GET ['limit'] : 5;
+    $offset = $page == 1 ? 0 : ($page - 1) * $limit;
+    
+
+    // $od = date_create ($dailyReportList['date']);
+    // $formattedDate = date_format ($od, "F d, Y");
+    // print_r ($formattedDate);
+    $formattedDate = empty ($searchDate) ? '' : date ("Y-m-d", strtotime ($searchDate));
+    print_r ($searchDate);
+    $dailyReportList = $mysqlInstance->getAllDailyReport($formattedDate, $limit, $offset);
+    $reportCount = $mysqlInstance->getReportTotalCount();
+    $numberOfPages = ceil($reportCount['count(id)'] / $limit);
 
 ?>
 
@@ -32,7 +34,7 @@
         <div class="row">
             <div class="col-6"></div>
             <div class="col-2">
-                    <form action="/functions/requestr.php" method="POST">
+                    <form action="/functions/request.php" method="POST">
                         <!-- <input type="hidden" name="id" value=""> -->
                         
                         <input type="hidden" name="action" value="check">
@@ -115,8 +117,8 @@
                             <th class="col-1"></th>
                         </tr>
                     </thead>
-                    <tbody data-table-body="daily-report">
-                        <!-- <?php foreach ($dailyReportList as $key => $value): ?>
+                    <tbody>
+                        <?php foreach ($dailyReportList as $key => $value): ?>
                             <tr>
                                 <td><?= $value['id'] ?></td>
                                 <td><?= date ("M d, Y", strtotime ($value['date'])) ?></td>
@@ -133,7 +135,7 @@
                                 <td class="d-flex justify-content-end">
                                     <a href="/edit-report.php?id=<?= $value['id'] ?>" class="btn btn-warning me-2">Edit</a>
                                     <form action="/functions/request.php" method="POST">
-                                        <!-- <input type="hidden" name="id" value="">
+                                        <!-- <input type="hidden" name="id" value=""> -->
                                         <input type="hidden" name="id" value="<?= $value['id'] ?>">
                                         <input type="hidden" name="action" value="delete-report">
                                         <button class="btn btn-danger">
@@ -143,13 +145,11 @@
                                     
                                 </td>
                             </tr>
-                        <?php endforeach ?> -->
+                        <?php endforeach ?>
                     </tbody>
                 </table>
             </div>
         </div>
-
-            <!-- Pagination -->
         <div aria-label="Search Page Navigation" class="d-flex">
             <ul class="pagination">
                 <il class="page-item">
@@ -174,8 +174,6 @@
     </div>
 </section>
 
-
-<!-- modal -->
 <div class="modal fade" id="dailyAuditModal" tabindex="-1" aria-labelledby="dailyAuditModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -184,7 +182,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="/functions/requestr.php" method="POST" id="daily-form">
+                <form action="/functions/request.php" method="POST">
                     <input type="hidden" name="action" value="create-daily-report">
                     <div class="container-fluid">
                         <div class="row">
@@ -261,135 +259,8 @@
     </div>
 </div>
 
-<div class="toast-container position-fixed p-3 top-0 end-0" >
-    <div class="toast bg-success  border-0" role="alert" aria-live="assertive" aria-atomic="true" data-toast="success-toast">
-        <div class="d-flex">
-            <div class="toast-body">
-                Save Success!
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-    </div>
-    <div class="toast text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true" data-toast="fail-toast">
-        <div class="d-flex">
-            <div class="toast-body">
-                Save Fail!
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-    </div>
-</div>
-
 <?php
     include_once './layout/footer.php';
        
       
 ?>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
-<script>
-    const dailyForm = document.querySelector ("#daily-form")
-
-    dailyForm.addEventListener ('submit', async (e) => {
-        e.preventDefault();
-
-        const dateValue = document.querySelector('[name="date"]').value
-        const transactionValue = document.querySelector('[name="transaction"]').value
-        const startMoneyValue = document.querySelector('[name="startMoney"]').value
-        const cashValue = document.querySelector('[name="cash"]').value
-        const gcashValue = document.querySelector('[name="gcash"]').value
-        const expensesValue = document.querySelector('[name="expenses"]').value
-        const otherExpensesValue = document.querySelector('[name="otherExpenses"]').value
-        const debtValue = document.querySelector('[name="debt"]').value
-        const actionValue = document.querySelector('[name="action"]').value
-
-        const formData = new FormData();
-        formData.append('action', actionValue);
-        formData.append('date', dateValue);
-        formData.append('transaction', transactionValue);
-        formData.append('startMoney', startMoneyValue);
-        formData.append('cash', cashValue);
-        formData.append('gcash', gcashValue);
-        formData.append('expenses', expensesValue);
-        formData.append('otherExpenses', otherExpensesValue);
-        formData.append('debt', debtValue);
-
-        await axios
-            .post(`functions/requestr.php`, formData)
-            .then(response => {
-                const responseData = response.data
-                console.log (responseData);
-                if (responseData === true) {
-                    showSuccessToast()
-                    fetchDailyReport() 
-                } else {
-                    showFailToast()
-                }
-            })
-    })
-
-    const fetchDailyReport = async () => {
-        const dailyReportTableBody = document.querySelector ('[data-table-body="daily-report"]')
-
-        await axios 
-            .get(`functions/requestr.php?action=get-daily-report-api`)
-            .then(response => {
-                const responseData = response.data
-                console.log (responseData);
-                let rowsToAppendOnTableBody = "";
-
-                responseData.map( (value, key) => {
-                    rowsToAppendOnTableBody += `<tr>
-                        <td>${value['id'] }</td>
-                        <td>${moment(value['date']).format('MMM D, YYYY')}</td>
-                        <td>${value['daily_transaction'] }</td>
-                        <td>${value['start_money'] }</td>
-                        <td>${value['cash'] }</td>
-                        <td>${value['gcash'] }</td>
-                        <td>${value['expenses'] }</td>
-                        <td>${value['other_expenses'] }</td>
-                        <td>${value['debt'] }</td>
-                        <td>${value['actual_cash'] }</td>
-                        <td>${value['supposed_cash'] }</td>
-                        <td>${value['outcome']}</td>
-                        <td class="d-flex justify-content-end">
-                            <a href="/edit-report.php?id=${value['id']}" class="btn btn-warning me-2">Edit</a>
-                            <form action="/functions/requestr.php" method="POST">
-                                
-                                <input type="hidden" name="id" value=${value['id']}>
-                                <input type="hidden" name="action" value="delete-report">
-                                <button class="btn btn-danger">
-                                    Delete
-                                </button>
-                            </form>
-                            
-                        </td>
-                    </tr>`
-                })
-
-                dailyReportTableBody.innerHTML = rowsToAppendOnTableBody
-
-            })
-    }
-
-    fetchDailyReport()
-    
-    
-
-    const showSuccessToast = () => {
-        let toastElList = [].slice.call(document.querySelectorAll('[data-toast="success-toast"]'))
-        let toastList = toastElList.map(function(toastEl) {
-            return new bootstrap.Toast(toastEl)
-        })
-        toastList.forEach(toast => toast.show())
-    }
-    const showFailToast = () => {
-        let toastElList = [].slice.call(document.querySelectorAll('[data-toast="fail-toast"]'))
-        let toastList = toastElList.map(function(toastEl) {
-            return new bootstrap.Toast(toastEl)
-        })
-        toastList.forEach(toast => toast.show())
-    }
-
-</script>    
-
